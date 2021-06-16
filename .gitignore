@@ -1,7 +1,3 @@
-# Vendor
-glfw
-glew
-
 # Prerequisites
 *.d
 .idea

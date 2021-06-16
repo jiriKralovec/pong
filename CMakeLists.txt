@@ -3,4 +3,23 @@ project(pong)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(pong main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
+
+# Add subdirectories
+add_subdirectory(glew-2.1.0/build/cmake)
+add_subdirectory(glfw)
+
+# Include public API
+target_include_directories(${PROJECT_NAME}
+    PUBLIC glfw/include
+    PUBLIC glew-2.1.0/include
+)
+
+# Link directories for library lookup
+target_link_directories(${PROJECT_NAME}
+    PRIVATE glew
+    PRIVATE glfw-2.1.0
+)
+
+# Lookup libraries
+target_link_libraries(${PROJECT_NAME} glew glfw)
