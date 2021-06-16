@@ -6,6 +6,7 @@
 #include "source/util/logger.h"
 #include "source/renderer.h"
 #include "source/input.h"
+#include "source/shader.h"
 
 int terminate(int status)
 {
@@ -22,6 +23,13 @@ int main() {
     Renderer::getInstance().getWindow(960, 540, "Pong!");
     if(!Renderer::getInstance().isWindowInitialized())
         return terminate(-2);
+
+    Renderer::getInstance().setContext();
+    if(!Renderer::getInstance().isContextInitialized())
+        return terminate(-3);
+
+    Shader s;
+    s.Bind();
 
     while(!glfwWindowShouldClose(Renderer::getInstance().getWindow()))
     {

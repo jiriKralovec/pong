@@ -3,7 +3,7 @@ project(pong)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp)
+add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp source/shader.h source/shader.cpp)
 
 # Add subdirectories
 add_subdirectory(glew-2.1.0/build/cmake)
@@ -22,4 +22,4 @@ target_link_directories(${PROJECT_NAME}
 )
 
 # Lookup libraries
-target_link_libraries(${PROJECT_NAME} glew glfw)
+target_link_libraries(${PROJECT_NAME} glew_s glfw)

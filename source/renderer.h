@@ -1,4 +1,5 @@
 #pragma once
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
 #include "util/logger.h"
@@ -8,8 +9,10 @@ class Renderer
 public:
     [[nodiscard]] bool isWindowInitialized() const { return m_window != nullptr; }
     [[nodiscard]] bool isInitialized() const { return m_initialized; }
-    GLFWwindow* getWindow() const;
+    [[nodiscard]] bool isContextInitialized() const { return m_contextInitialized; }
+     GLFWwindow* getWindow() const;
     GLFWwindow* getWindow(uint32_t width, uint32_t height, const char* title);
+    GLenum setContext();
     static Renderer& getInstance();
     static void freeInstanceIfAny();
 private:
@@ -18,5 +21,6 @@ private:
     ~Renderer();
     GLFWwindow* m_window;
     bool m_initialized;
+    bool m_contextInitialized;
 };
 
