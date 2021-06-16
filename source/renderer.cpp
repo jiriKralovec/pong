@@ -22,7 +22,7 @@ Renderer& Renderer::getInstance()
     }
     return *m_instance;
 }
-void Renderer::freeInstance() {
+void Renderer::freeInstanceIfAny() {
     delete m_instance;
     m_instance = nullptr;
 }

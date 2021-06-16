@@ -5,10 +5,12 @@
 
 #include "source/util/logger.h"
 #include "source/renderer.h"
+#include "source/input.h"
 
 int terminate(int status)
 {
-    Renderer::freeInstance();
+    Renderer::freeInstanceIfAny();
+    InputCtrl::freeInstanceIfAny();
     return status;
 }
 
@@ -23,7 +25,6 @@ int main() {
 
     while(!glfwWindowShouldClose(Renderer::getInstance().getWindow()))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(Renderer::getInstance().getWindow());
         glfwPollEvents();
     }

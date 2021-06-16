@@ -11,7 +11,7 @@ public:
     GLFWwindow* getWindow() const;
     GLFWwindow* getWindow(uint32_t width, uint32_t height, const char* title);
     static Renderer& getInstance();
-    static void freeInstance();
+    static void freeInstanceIfAny();
 private:
     static Renderer* m_instance;
     Renderer();

@@ -3,7 +3,7 @@ project(pong)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp)
+add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp)
 
 # Add subdirectories
 add_subdirectory(glew-2.1.0/build/cmake)
