@@ -8,6 +8,8 @@
 #include "source/input.h"
 #include "source/shader.h"
 
+#include "source/rectangle.h"
+
 int terminate(int status)
 {
     Renderer::freeInstanceIfAny();
@@ -28,11 +30,17 @@ int main() {
     if(!Renderer::getInstance().isContextInitialized())
         return terminate(-3);
 
-    Shader s;
-    s.Bind();
+    Rectangle rectangle(0.5f, 0.5f, 0.5f, 0.5f);
+
+    Shader shader;
+    Renderer::getInstance().BindMvp(shader);
 
     while(!glfwWindowShouldClose(Renderer::getInstance().getWindow()))
     {
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        rectangle.Draw();
+
         glfwSwapBuffers(Renderer::getInstance().getWindow());
         glfwPollEvents();
     }

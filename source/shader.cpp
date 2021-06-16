@@ -6,7 +6,8 @@ Shader::Shader() : m_Source(ShaderSource
     {
             "#version 330 core\n"
             "layout (location = 0) in vec3 aPos;\n"
-            "void main() { gl_Position = vec4(aPos, 1.0f); }\n",
+            "uniform mat4 projection;\n"
+            "void main() { gl_Position = projection * vec4(aPos, 1.0f); }\n",
             "#version 330 core\n"
             "void main() { gl_FragColor = vec4(1.0f); }\n"
     })

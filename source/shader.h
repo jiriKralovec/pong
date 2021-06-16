@@ -13,6 +13,7 @@ public:
     ~Shader();
     void Bind() const;
     void Unbind() const;
+    const unsigned int GetRendererId() const { return m_RendererId; }
 private:
     void LoadShader();
     unsigned int CompileShader(unsigned int type);

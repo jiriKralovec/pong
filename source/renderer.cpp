@@ -1,5 +1,30 @@
 #include "renderer.h"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
+void Renderer::DrawAsArrays(uint32_t rendererId)
+{
+    if(rendererId == 0)
+    {
+        LOG("No buffer defined.");
+        return;
+    }
+
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererId));
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+void Renderer::BindMvp(const Shader& shader) const
+{
+
+    shader.Bind();
+
+    glm::mat4 projection = glm::ortho(0.0f, m_windowWidth, m_windowHeight, 0.0f, -1.0f, 1.0f);
+
+    GLCall(GLint uniformLocation = glGetUniformLocation(shader.GetRendererId(), "projection"));
+    GLCall(glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection)));
+
+}
 GLenum Renderer::setContext()
 {
     if(m_window == nullptr)
@@ -39,6 +64,8 @@ GLFWwindow* Renderer::getWindow(const uint32_t width, const uint32_t height, con
 {
     if(m_window == nullptr)
     {
+        m_windowWidth = static_cast<float>(width);
+        m_windowHeight = static_cast<float>(height);
         m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     }
     return m_window;
@@ -55,7 +82,7 @@ void Renderer::freeInstanceIfAny() {
     delete m_instance;
     m_instance = nullptr;
 }
-Renderer::Renderer() : m_window(nullptr), m_contextInitialized(false)
+Renderer::Renderer() : m_window(nullptr), m_contextInitialized(false), m_windowHeight(0.0f), m_windowWidth(0.0f), m_mvcRendererId(0)
 {
     /** Initialize GLFW */
     m_initialized = glfwInit() == GL_TRUE;
