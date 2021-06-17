@@ -3,6 +3,7 @@
 
 #include "source/util/logger.h"
 #include "source/renderer.h"
+#include "source/object-store.h"
 #include "source/input.h"
 
 #include "source/triangle.h"
@@ -10,6 +11,7 @@
 int terminate(int status)
 {
     Renderer::freeInstanceIfAny();
+    ObjectStore::freeInstanceIfAny();
     return status;
 }
 
@@ -27,13 +29,16 @@ int main() {
     Renderer::getInstance().GetMainShaderInstance().Bind();
     Renderer::getInstance().SetRenderingContext();
 
-    Triangle triangle({50.0f, 50.0f}, { 0.0f, 0.0f });
+    Triangle a({50.0f, 50.0f}, { 0.0f, 0.0f });
+    Triangle b({50.0f, 50.0f}, { 150.0f, 0.0f });
+    Triangle c({50.0f, 50.0f}, { 300.0f, 0.0f });
 
     while(!Renderer::getInstance().ShouldCurrentWindowClose())
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        triangle.Draw();
+        ObjectStore::getInstance().RunBatchUpdate();
+        ObjectStore::getInstance().RunBatchDraw();
 
         glfwSwapBuffers(&Renderer::getInstance().GetCurrentWindowInstance());
         glfwPollEvents();
