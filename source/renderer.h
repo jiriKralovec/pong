@@ -5,6 +5,7 @@
 #include "util/logger.h"
 #include "shader.h"
 #include "glm.hpp"
+#include "rendering/index_buffer.h"
 #include "rendering/vertex_buffer.h"
 #include "rendering/vertex_array.h"
 
@@ -18,6 +19,7 @@ public:
     void SetRenderingContext() const;
     void Draw(const VertexBuffer* vb) const;
     void Draw(const VertexArrayObject& vao) const;
+    void Draw(const VertexArrayObject& vao, const IndexBuffer& vbo) const;
 public:
     static Renderer& getInstance();
     static void freeInstanceIfAny();

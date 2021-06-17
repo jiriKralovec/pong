@@ -6,10 +6,11 @@
 #include "../renderer.h"
 #include "game_object.h"
 
+#include "../rendering/index_buffer.h"
 #include "../rendering/vertex_buffer.h"
 #include "../rendering/vertex_array.h"
 
-template<size_t VertexCount>
+template<size_t VertexCount, size_t IndexCount>
 class Shape : public GameObject
 {
 public:
@@ -18,7 +19,7 @@ public:
     { }
     virtual void Draw() const
     {
-        Renderer::getInstance().Draw(m_vao);
+        Renderer::getInstance().Draw(m_vao, m_vbo);
     }
     virtual void Update() { }
 protected:
@@ -26,11 +27,14 @@ protected:
     {
         m_vb.LoadGeometry(m_vertices, VertexCount);
         m_vao.AddBuffer(m_vb);
+        m_vbo.LoadIndices(m_indices, IndexCount);
     }
 private:
     VertexBuffer m_vb;
+    IndexBuffer m_vbo;
     VertexArrayObject m_vao;
 protected:
+    unsigned int m_indices[IndexCount];
     float m_vertices[VertexCount * 2];
     glm::vec2 m_position;
     glm::vec2 m_origin;

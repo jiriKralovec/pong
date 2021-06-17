@@ -7,6 +7,7 @@
 #include "source/input.h"
 
 #include "source/triangle.h"
+#include "source/rectangle.h"
 
 int terminate(int status)
 {
@@ -31,7 +32,7 @@ int main() {
 
     Triangle a({50.0f, 50.0f}, { 0.0f, 0.0f });
     Triangle b({50.0f, 50.0f}, { 150.0f, 0.0f });
-    Triangle c({50.0f, 50.0f}, { 300.0f, 0.0f });
+    Rectangle c({50.0f, 150.0f}, { 300.0f, 100.0f });
 
     while(!Renderer::getInstance().ShouldCurrentWindowClose())
     {
