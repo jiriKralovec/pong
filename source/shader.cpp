@@ -1,34 +1,75 @@
 #include "shader.h"
 #include "util/logger.h"
+#include "util/file.h"
 #include "GL/glew.h"
 
-Shader::Shader() : m_Source(ShaderSource
-    {
-            "#version 330 core\n"
-            "layout (location = 0) in vec3 aPos;\n"
-            "uniform mat4 projection;\n"
-            "void main() { gl_Position = projection * vec4(aPos, 1.0f); }\n",
-            "#version 330 core\n"
-            "void main() { gl_FragColor = vec4(1.0f); }\n"
-    })
-{
-    LoadShader();
+#include <fstream>
+#include <sstream>
+#include <cctype>
+#include <cstdio>
+#include <cstring>
+#include <string>
+
+/** New shader */
+Shader::Shader(const char *vertexPath, const char *fragmentPath) {
+
+    LoadSource(vertexPath, GL_VERTEX_SHADER);
+    LoadSource(fragmentPath, GL_FRAGMENT_SHADER);
+
+    BuildShader();
+
 }
 Shader::~Shader() = default;
-void Shader::Bind() const
-{
+void Shader::Bind() const {
     GLCall(glUseProgram(m_RendererId));
 }
-void Shader::Unbind() const
-{
+void Shader::Unbind() const {
     GLCall(glUseProgram(0));
 }
-void Shader::LoadShader()
-{
+void Shader::LoadSource(const char *path, unsigned int type) {
+
+    std::ifstream inputFile;
+    inputFile.open(path);
+
+    std::stringstream inputStream;
+    inputStream << inputFile.rdbuf();
+
+    std::string outString = inputStream.str();
+
+    inputFile.close();
+
+    if(type == GL_VERTEX_SHADER)
+    {
+        //m_Source.vertex = outString.c_str();
+        m_Source.vertex = "#version 330\n"
+                          "\n"
+                          "layout (location = 0) in vec3 verPos;\n"
+                          "\n"
+                          "uniform mat4 uProjection;\n"
+                          "\n"
+                          "void main() {\n"
+                          "    gl_Position = uProjection * vec4(verPos, 1.0);\n"
+                          "}";
+    }
+    else
+    {
+        //m_Source.fragment = outString.c_stsr();
+        m_Source.fragment = "#version 330\n"
+                            "\n"
+                            "out vec4 fragColor;\n"
+                            "\n"
+                            "void main() {\n"
+                            "    fragColor = vec4(1.0);\n"
+                            "}";
+    }
+
+}
+void Shader::BuildShader() {
+
     GLCall(m_RendererId = glCreateProgram());
 
-    GLCall(uint32_t vertex = CompileShader(GL_VERTEX_SHADER));
-    GLCall(uint32_t fragment = CompileShader(GL_FRAGMENT_SHADER));
+    GLCall(uint32_t vertex = CompileSource(GL_VERTEX_SHADER));
+    GLCall(uint32_t fragment = CompileSource(GL_FRAGMENT_SHADER));
 
     GLCall(glAttachShader(m_RendererId, vertex));
     GLCall(glAttachShader(m_RendererId, fragment));
@@ -40,18 +81,18 @@ void Shader::LoadShader()
     GLCall(glDeleteShader(fragment));
 
 }
-uint32_t Shader::CompileShader(GLenum type)
+unsigned int Shader::CompileSource(unsigned int type) const
 {
     GLCall(uint32_t shader = glCreateShader(type));
 
     /** Load source */
     GLCall(
-    glShaderSource(
-            shader,
-            1,
-            type == GL_VERTEX_SHADER ? &m_Source.vertex : &m_Source.fragment,
-            nullptr
-        )
+            glShaderSource(
+                    shader,
+                    1,
+                    type == GL_VERTEX_SHADER ? &m_Source.vertex : &m_Source.fragment,
+                    nullptr
+            )
     );
 
     GLCall(glCompileShader(shader));
@@ -84,5 +125,4 @@ uint32_t Shader::CompileShader(GLenum type)
     }
 
     return shader;
-
 }

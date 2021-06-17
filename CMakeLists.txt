@@ -3,7 +3,12 @@ project(pong)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp source/shader.h source/shader.cpp source/rectangle.h)
+add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp source/shader.h source/shader.cpp source/util/file.h source/util/file.cpp source/abstract/shape.cpp source/abstract/shape.h source/triangle.h)
+
+# Copy resources
+##add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
+##        COMMAND ${CMAKE_COMMAND} -E copy_directory
+##        ${CMAKE_SOURCE_DIR}/source/shaders/ $<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders/)
 
 # Add subdirectories
 add_subdirectory(glew-2.1.0/build/cmake)

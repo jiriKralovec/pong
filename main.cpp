@@ -1,50 +1,46 @@
-#include <iostream>
-
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 #include "source/util/logger.h"
 #include "source/renderer.h"
 #include "source/input.h"
-#include "source/shader.h"
 
-#include "source/rectangle.h"
+#include "source/triangle.h"
 
 int terminate(int status)
 {
     Renderer::freeInstanceIfAny();
-    InputCtrl::freeInstanceIfAny();
     return status;
 }
 
 int main() {
 
-    if(!Renderer::getInstance().isInitialized())
-        return terminate(-1);
+    if(!glfwInit())
+    {
+        LOG("GLFW failed to initialize");
+        return -1;
+    }
 
-    Renderer::getInstance().getWindow(960, 540, "Pong!");
-    if(!Renderer::getInstance().isWindowInitialized())
-        return terminate(-2);
-
-    Renderer::getInstance().setContext();
-    if(!Renderer::getInstance().isContextInitialized())
+    if(!Renderer::getInstance().CreateWindowIfNotExists(960, 540, "Pong!"))
         return terminate(-3);
 
-    Rectangle rectangle(0.5f, 0.5f, 0.5f, 0.5f);
+    Renderer::getInstance().GetMainShaderInstance().Bind();
+    Renderer::getInstance().SetRenderingContext();
 
-    Shader shader;
-    Renderer::getInstance().BindMvp(shader);
+    Triangle triangle({50.0f, 50.0f}, { 0.0f, 0.0f });
 
-    while(!glfwWindowShouldClose(Renderer::getInstance().getWindow()))
+    while(!Renderer::getInstance().ShouldCurrentWindowClose())
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        rectangle.Draw();
+        triangle.Draw();
 
-        glfwSwapBuffers(Renderer::getInstance().getWindow());
+        glfwSwapBuffers(&Renderer::getInstance().GetCurrentWindowInstance());
         glfwPollEvents();
     }
 
-    return terminate(0);
+    terminate(0);
+
+    return 0;
 
 }

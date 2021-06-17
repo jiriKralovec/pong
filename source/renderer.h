@@ -9,29 +9,22 @@
 class Renderer
 {
 public:
-    void BindMvp(const Shader& shader) const;
-
-    void DrawAsArrays(unsigned int rendererId);
-
-    [[nodiscard]] bool isWindowInitialized() const { return m_window != nullptr; }
-    [[nodiscard]] bool isInitialized() const { return m_initialized; }
-    [[nodiscard]] bool isContextInitialized() const { return m_contextInitialized; }
-
-     GLFWwindow* getWindow() const;
-    GLFWwindow* getWindow(uint32_t width, uint32_t height, const char* title);
-    GLenum setContext();
-
+    int CreateWindowIfNotExists(uint32_t width, uint32_t height, const char* title);
+    [[nodiscard]] bool ShouldCurrentWindowClose() const;
+    [[nodiscard]] GLFWwindow& GetCurrentWindowInstance() const { return *m_window; }
+    [[nodiscard]] const Shader& GetMainShaderInstance();
+    void SetRenderingContext() const;
+    void Draw(uint32_t rendererId) const;
+public:
     static Renderer& getInstance();
     static void freeInstanceIfAny();
 private:
-    static Renderer* m_instance;
     Renderer();
     ~Renderer();
+private:
+    static Renderer* m_instance;
     GLFWwindow* m_window;
-    bool m_initialized;
-    bool m_contextInitialized;
-    float m_windowWidth;
-    float m_windowHeight;
-    uint32_t m_mvcRendererId;
+    uint32_t m_windowWidth;
+    uint32_t m_windowHeight;
+    Shader* m_shader;
 };
-

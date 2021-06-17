@@ -2,11 +2,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-void Renderer::DrawAsArrays(uint32_t rendererId)
+Renderer* Renderer::m_instance = nullptr;
+
+void Renderer::Draw(uint32_t rendererId) const
 {
     if(rendererId == 0)
     {
-        LOG("No buffer defined.");
+        LOG("No buffer defined - draw call will be skipped.");
         return;
     }
 
@@ -14,88 +16,95 @@ void Renderer::DrawAsArrays(uint32_t rendererId)
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
-void Renderer::BindMvp(const Shader& shader) const
+void Renderer::SetRenderingContext() const
 {
+    if(m_shader == nullptr)
+    {
+        LOG("Failed to set rendering context - no main shader attached");
+        return;
+    }
 
-    shader.Bind();
+    m_shader->Bind();
 
-    glm::mat4 projection = glm::ortho(0.0f, m_windowWidth, m_windowHeight, 0.0f, -1.0f, 1.0f);
+    auto projection = glm::ortho(0.0f, static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight), 0.0f, -1.0f, 1.0f);
 
-    GLCall(GLint uniformLocation = glGetUniformLocation(shader.GetRendererId(), "projection"));
-    GLCall(glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection)));
+    GLuint projectionUniformLocation = glGetUniformLocation(m_shader->GetRendererId(), "uProjection");
+
+    glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
 }
-GLenum Renderer::setContext()
+const Shader& Renderer::GetMainShaderInstance()
+{
+    if(m_shader == nullptr)
+        m_shader = new Shader("shaders/basic.vertex.glsl", "shaders/basic.fragment.glsl");
+    return *m_shader;
+}
+bool Renderer::ShouldCurrentWindowClose() const
 {
     if(m_window == nullptr)
+        return true;
+    return glfwWindowShouldClose(m_window);
+}
+int Renderer::CreateWindowIfNotExists(uint32_t width, uint32_t height, const char *title) {
+
+    if(m_window != nullptr)
     {
-        LOG("Error setting correct context - window does not exist!");
-        return GL_FALSE;
+        LOG("Error while creating new GLFW window - window is already created!");
+        return -1;
     }
-    if(m_contextInitialized)
+
+    m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    if(m_window == nullptr)
     {
-        LOG("Context is already initialized");
-        return GL_TRUE;
+        LOG("Error while creating new GLFW window - window failed to initialize");
+        return -2;
     }
+
+    m_windowWidth = width;
+    m_windowHeight = height;
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1);
 
-    GLenum initStatus = glewInit();
-
-    if(initStatus == GLEW_OK)
+    GLenum glewInitStatus = glewInit();
+    if(glewInitStatus != GLEW_OK)
     {
-        m_contextInitialized = true;
-        return GL_TRUE;
+        std::cout << "GLEW failed to initialize: " << glewGetErrorString(glewInitStatus) << std::endl;
+        return -2;
     }
-    return initStatus;
+
+    return 1;
 
 }
-GLFWwindow* Renderer::getWindow() const {
-    if(m_window != nullptr)
-        glfwMakeContextCurrent(m_window);
-    return m_window;
-}
-GLFWwindow* Renderer::getWindow(const uint32_t width, const uint32_t height, const char* title)
-{
-    if(m_window == nullptr)
-    {
-        m_windowWidth = static_cast<float>(width);
-        m_windowHeight = static_cast<float>(height);
-        m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    }
-    return m_window;
-}
-Renderer& Renderer::getInstance()
-{
+Renderer& Renderer::getInstance() {
     if(m_instance == nullptr)
-    {
         m_instance = new Renderer();
-    }
     return *m_instance;
 }
 void Renderer::freeInstanceIfAny() {
-    delete m_instance;
+    if(m_instance != nullptr)
+        delete m_instance;
     m_instance = nullptr;
 }
-Renderer::Renderer() : m_window(nullptr), m_contextInitialized(false), m_windowHeight(0.0f), m_windowWidth(0.0f), m_mvcRendererId(0)
-{
-    /** Initialize GLFW */
-    m_initialized = glfwInit() == GL_TRUE;
-    if(!m_initialized)
-        LOG("Failed to initialize GLFW context");
-}
-Renderer::~Renderer()
-{
-    if(isInitialized())
-    {
-        glfwDestroyWindow(m_window);
-        glfwTerminate();
-    }
-}
+Renderer::Renderer(): m_windowWidth(0), m_windowHeight(0), m_window(nullptr), m_shader(nullptr) { }
+Renderer::~Renderer() {
 
-Renderer* Renderer::m_instance = nullptr;
+    if(m_shader != nullptr)
+    {
+        m_shader->Unbind();
+        delete m_shader;
+    }
+    m_shader = nullptr;
+
+    if(m_window != nullptr)
+        glfwDestroyWindow(m_window);
+
+    glfwTerminate();
+
+}
