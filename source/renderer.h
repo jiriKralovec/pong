@@ -6,6 +6,7 @@
 #include "shader.h"
 #include "glm.hpp"
 #include "rendering/vertex_buffer.h"
+#include "rendering/vertex_array.h"
 
 class Renderer
 {
@@ -16,6 +17,7 @@ public:
     [[nodiscard]] const Shader& GetMainShaderInstance();
     void SetRenderingContext() const;
     void Draw(const VertexBuffer* vb) const;
+    void Draw(const VertexArrayObject& vao) const;
 public:
     static Renderer& getInstance();
     static void freeInstanceIfAny();

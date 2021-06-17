@@ -5,6 +5,12 @@
 
 Renderer* Renderer::m_instance = nullptr;
 
+void Renderer::Draw(const VertexArrayObject& vao) const
+{
+    vao.Bind();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    vao.Unbind();
+}
 void Renderer::Draw(const VertexBuffer* vb) const
 {
     vb->Bind();

@@ -3,10 +3,11 @@
 class VertexBuffer
 {
 public:
-    VertexBuffer(const void* data, unsigned int vertexCount);
+    VertexBuffer();
     ~VertexBuffer();
     void Bind() const;
     void Unbind() const;
+    void LoadGeometry(const void* data, unsigned int count);
     unsigned int VertexCount() const { return m_vertexCount; }
 private:
     unsigned int m_rendererId;

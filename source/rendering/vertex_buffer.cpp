@@ -6,23 +6,28 @@
 #include "../util/logger.h"
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+#include <iostream>
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int vertexCount): m_rendererId(0), m_vertexCount(vertexCount)
-{
-    glGenBuffers(1, &m_rendererId);
-    glBindBuffer(GL_ARRAY_BUFFER, m_rendererId);
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * 2 * sizeof(float), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
+VertexBuffer::VertexBuffer(): m_rendererId(0), m_vertexCount(0)
+{ }
 VertexBuffer::~VertexBuffer()
 {
-
+    GLCall(glDeleteBuffers(1, &m_rendererId));
 }
 void VertexBuffer::Bind() const
 {
-    glBindBuffer(GL_ARRAY_BUFFER, m_rendererId);
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_rendererId));
 }
 void VertexBuffer::Unbind() const
 {
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+}
+void VertexBuffer::LoadGeometry(const void* data, unsigned int count)
+{
+    m_vertexCount = count;
+
+    GLCall(glGenBuffers(1, &m_rendererId));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_rendererId));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, count * 2 * sizeof(float), data, GL_STATIC_DRAW));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
