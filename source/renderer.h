@@ -5,6 +5,7 @@
 #include "util/logger.h"
 #include "shader.h"
 #include "glm.hpp"
+#include "rendering/vertexbuffer.h"
 
 class Renderer
 {
@@ -14,7 +15,7 @@ public:
     [[nodiscard]] GLFWwindow& GetCurrentWindowInstance() const { return *m_window; }
     [[nodiscard]] const Shader& GetMainShaderInstance();
     void SetRenderingContext() const;
-    void Draw(uint32_t rendererId) const;
+    void Draw(const VertexBuffer* vb) const;
 public:
     static Renderer& getInstance();
     static void freeInstanceIfAny();

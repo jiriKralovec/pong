@@ -2,19 +2,14 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+
 Renderer* Renderer::m_instance = nullptr;
 
-void Renderer::Draw(uint32_t rendererId) const
+void Renderer::Draw(const VertexBuffer* vb) const
 {
-    if(rendererId == 0)
-    {
-        LOG("No buffer defined - draw call will be skipped.");
-        return;
-    }
-
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererId));
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    vb->Bind();
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, vb->VertexCount()));
+    vb->Unbind();
 }
 void Renderer::SetRenderingContext() const
 {

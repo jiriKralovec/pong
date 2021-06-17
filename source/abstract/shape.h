@@ -5,18 +5,19 @@
 #include "../util/logger.h"
 #include "../renderer.h"
 #include "game-object.h"
+#include "../rendering/vertexbuffer.h"
 
 template<size_t VertexCount>
 class Shape : public GameObject
 {
 public:
     explicit Shape(glm::vec2 position)
-        : GameObject(), m_position(position), m_origin({0.5f, 0.5f}), m_scale({1.0f, 1.0f})
+        : GameObject(), m_position(position), m_origin({0.5f, 0.5f}), m_scale({1.0f, 1.0f}), m_vb(nullptr)
     { }
     virtual void Draw() const
     {
 
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer));
+        m_vb->Bind();
 
         GLCall(glEnableVertexAttribArray(0));
         GLCall(glVertexAttribPointer(
@@ -28,28 +29,21 @@ public:
                 nullptr
         ));
 
-        Renderer::getInstance().Draw(m_vertexBuffer);
+        Renderer::getInstance().Draw(m_vb);
 
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        m_vb->Unbind();
 
     }
     virtual void Update() { }
 protected:
-    void AttachVertexBufferData()
+    void BuildBuffers()
     {
-
-        if(m_vertexBuffer == 0)
-            GLCall(glGenBuffers(1, &m_vertexBuffer));
-
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer));
-        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices), &m_vertices, GL_STATIC_DRAW));
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
+        m_vb = new VertexBuffer(m_vertices, VertexCount);
     }
 private:
-    unsigned int m_vertexBuffer;
+    VertexBuffer* m_vb;
 protected:
-    float m_vertices[VertexCount];
+    float m_vertices[VertexCount * 2];
     glm::vec2 m_position;
     glm::vec2 m_origin;
     glm::vec2 m_scale;

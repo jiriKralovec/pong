@@ -3,7 +3,7 @@ project(pong)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp source/shader.h source/shader.cpp source/util/file.h source/util/file.cpp source/abstract/shape.cpp source/abstract/shape.h source/triangle.h source/abstract/game-object.h source/object-store.h source/object-store.cpp source/abstract/game-object.cpp)
+add_executable(${PROJECT_NAME} main.cpp source/util/logger.h source/renderer.h source/renderer.cpp source/util/logger.cpp source/input.h source/input.cpp source/shader.h source/shader.cpp source/util/file.h source/util/file.cpp source/abstract/shape.cpp source/abstract/shape.h source/triangle.h source/abstract/game-object.h source/object-store.h source/object-store.cpp source/abstract/game-object.cpp source/rendering/vertexbuffer.cpp source/rendering/vertexbuffer.h)
 
 # Copy resources
 ##add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
