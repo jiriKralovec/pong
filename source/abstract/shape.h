@@ -4,8 +4,8 @@
 #include "GLFW/glfw3.h"
 #include "../util/logger.h"
 #include "../renderer.h"
-#include "game-object.h"
-#include "../rendering/vertexbuffer.h"
+#include "game_object.h"
+#include "../rendering/vertex_buffer.h"
 
 template<size_t VertexCount>
 class Shape : public GameObject

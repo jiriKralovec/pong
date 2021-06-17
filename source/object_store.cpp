@@ -1,4 +1,4 @@
-#include "object-store.h"
+#include "object_store.h"
 
 void ObjectStore::RunBatchUpdate() const
 {

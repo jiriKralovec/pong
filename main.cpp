@@ -3,7 +3,7 @@
 
 #include "source/util/logger.h"
 #include "source/renderer.h"
-#include "source/object-store.h"
+#include "source/object_store.h"
 #include "source/input.h"
 
 #include "source/triangle.h"

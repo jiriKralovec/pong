@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "abstract/game-object.h"
+#include "abstract/game_object.h"
 
 class ObjectStore
 {

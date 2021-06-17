@@ -5,7 +5,7 @@
 #include "util/logger.h"
 #include "shader.h"
 #include "glm.hpp"
-#include "rendering/vertexbuffer.h"
+#include "rendering/vertex_buffer.h"
 
 class Renderer
 {

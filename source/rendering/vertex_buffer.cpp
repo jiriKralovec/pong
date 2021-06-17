@@ -2,7 +2,7 @@
 // Created by jrl on 17/06/2021.
 //
 
-#include "vertexbuffer.h"
+#include "vertex_buffer.h"
 #include "../util/logger.h"
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
